@@ -20,7 +20,7 @@ Obrazac koji je skoro postao standard u industriji i često se sreće, AAA (Arra
 - Act (Postupak) deo u kom se izvršava Unit koji se testira.
 - Asssert (Tvrditi) deo u kom se proverava da li rezultat izvršenja zadovoljava definisane kriterijume.
 
-https://github.com/stefi51/unit-tests-tutorial/blob/main/tests/Template.Business.UnitTests/Concepts.cs?plain#L18-L40
+https://github.com/stefi51/unit-tests-tutorial/blob/main/tests/Template.Business.UnitTests/Concepts.cs?plain=1#L18-L40
 
 
 У овом пројекту коришћена је MSTest библиотека за јединично тестирање. Поред ње познате су и xUnit и NUnit.
