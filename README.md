@@ -37,14 +37,31 @@ public void CalculateTotal_ShouldApplyDiscountCorrectlyMultiple(double price, in
 
     // Assert    
     Assert.AreEqual((decimal)expectedTotal, totalPrice);
+    // 200 - 10% = 180
+    // 300 - 20% = 240
 }
 ```
-Kao što se može videti iz primera, ovaj Unit test će izvršiti 2 test scenaria, za količinu od 2,3 i popustom od 10% i 20% procenata.<br>
 👉 [Source kod se nalazi u Concepts.cs file-u. (lines 33–48)](https://github.com/stefi51/unit-tests-tutorial/blob/main/tests/Template.Business.UnitTests/Concepts.cs#L33-L48)
+<br>
+Kao što se može videti iz primera, ovaj Unit test će izvršiti za 2 test scenaria, za količinu od 2,3 i popustom od 10% i 20% procenata.<br>
+Ako metoda CalculateTotal vrati očekivane rezultate, test će biti označen kao uspešan(passed), ako rezultat bude različit u odnosu na to šta je očekivano, u ovom slučaju 180 i 240, test će biti označen kao neuspešan (failed). <br>
 
 ---
+### Izbor framework-a za Unit testiranje
+Za izradu ovog tutorijala korišćena je [MSTest](https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-csharp-with-mstest) framework za testiranje.<br> Prvenstveno jer dolazi već integrisan tokom kreiranja projekta, i zbog jednostavne sitankse koja je poznata većem broju ljudi (TestMethod, TestClass). <br>
+Pored MSTest biblioteke poznate su i široko rasporstanje su :
+- [xUnit](https://xunit.net/), otvorenog koda, inicijalno kompleksnija sintaksa, zahteva krivu učenja, pogodna za .NET Core i NET 5 i novije verzije.
+- [NUnit](https://nunit.org/) , otvorenog koda, pogodna za velike projekte sa puno testova.
+<br>
 
-У овом пројекту коришћена је MSTest библиотека за јединично тестирање. Поред ње познате су и xUnit и NUnit.
+  | Feature                          | **MS Test**                         | **NUnit**                    | **xUnit**                         |
+  | -------------------------------- | ----------------------------------- | ---------------------------- | --------------------------------- |
+  | **Test Class Attribute**         | `[TestClass]`                       | `[TestFixture]` *(optional)* | ❌ No class attribute needed       |
+  | **Test Method Attribute**        | `[TestMethod]`                      | `[Test]`                     | `[Fact]`                          |
+  | **Parameterized Test Attribute** | `[DataTestMethod] + [DataRow(...)]` | `[TestCase(...)]`            | `[Theory] + [InlineData(...)]`    |
+  | **Setup Method**                 | `[TestInitialize]`                  | `[SetUp]`                    | Constructor or `IClassFixture<T>` |
+  | **Teardown Method**              | `[TestCleanup]`                     | `[TearDown]`                 | `IDisposable.Dispose()`           |
+  | **Assert Class**                 | `Assert.AreEqual(...)`              | `Assert.AreEqual(...)`       | `Assert.Equal(...)`               |
 
 ---
 Mock библиотека: У овом пројекту коришћена је Moq библиотека.
