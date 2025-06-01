@@ -25,4 +25,12 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-build --no-restore --logger trx --results-directory "TestResults-8.0"
+    - name: Upload dotnet test results
+      uses: actions/upload-artifact@v4
+      with:
+        name: dotnet-results-8.0
+        path: TestResults-8.0
+      # Use always() to always run this step to publish test results when there are test failures
+      if: ${{ always() }}
+
