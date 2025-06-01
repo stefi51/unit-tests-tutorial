@@ -7,9 +7,22 @@ Unit testiranja omogućava rano otkrivanje grešaka(bugs) tokom samog razvoja fu
 
 Osnovni je deo **Test-Driven Development (TDD)**, gde se Unit testovi, sa očekivanim rezultatima koji unit treba da zadovolji, pišu pre same implementacije unit-a.<br> Ovo predstavlja ekstremni slučaj, u praksi većina softver inženjera piše Unit testove nakom same implementacije da bi testirali novu funkcionalnost i pre samog kreiranja pull-request-a(PR).
 
-//TODO prednosti i mane
+TODO prednosti i mane
 
 ---
+
+### Primer Unit test i AAA (Arrange, Act, Assert) obrazac
+
+Unit test predstavlja blok koda koji verifikuje ispravnost izolovanog unita.<br>
+Napisan je tako da verifikuje da li se određeni unit ponaša u skladu sa željenim ponašanjem koje je softver inženjer zahteva.<br>
+Obrazac koji je skoro postao standard u industriji i često se sreće, AAA (Arrange, Act and Assert), ima za ideju da se Unit test podeli u tri faze i to:<br>
+- Arrange( Aranžirati ) deo u kom se pripremaju ulazni podaci, mock-uju zavisnost ako ih Unit poseduje, i eventualno istancira Unit.
+- Act (Postupak) deo u kom se izvršava Unit koji se testira.
+- Asssert (Tvrditi) deo u kom se proverava da li rezultat izvršenja zadovoljava definisane kriterijume.
+
+https://github.com/stefi51/unit-tests-tutorial/blob/main/tests/Template.Business.UnitTests/Concepts.cs#L18-L40
+
+
 У овом пројекту коришћена је MSTest библиотека за јединично тестирање. Поред ње познате су и xUnit и NUnit.
 
 ---
