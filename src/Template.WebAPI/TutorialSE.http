@@ -1,6 +1,28 @@
-@TutorialSE_HostAddress = http://localhost:5225
+@api_url = https://localhost:7012/
 
-GET {{TutorialSE_HostAddress}}/weatherforecast/
+GET {{api_url}}/users/
 Accept: application/json
+###
+POST {{api_url}}/users
+Content-Type: application/json
+
+{
+  "name": "Marko",
+  "lastName": "Marković",
+  "email": "marko@example.com",
+  "password": "tajna123"
+}
 
 ###
+# curl -X GET http://localhost:5000/users/USER_ID
+GET {{api_url}}/users/d290f1ee-6c54-4b01-90e6-d701748f0851
+###
+
+# curl -X DELETE http://localhost:5000/users/USER_ID
+DELETE {{api_url}}d290f1ee-6c54-4b01-90e6-d701748f0851
+
+###
+
+
+
+

@@ -1,6 +1,6 @@
 using Template.Business.DTOs;
 
-namespace Template.Business;
+namespace Template.Business.Services;
 
 public interface IUserService
 {
@@ -8,4 +8,6 @@ public interface IUserService
         Task<IEnumerable<UserDto>> GetUsers();
         Task CreateUser(CreateUserDto user);
         Task DeleteUser(Guid userId);
+        
+        Task UpdateName(Guid userId, string name);
 }
