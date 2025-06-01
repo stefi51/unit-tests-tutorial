@@ -20,8 +20,29 @@ Obrazac koji je skoro postao standard u industriji i često se sreće, AAA (Arra
 - Act (Postupak) deo u kom se izvršava Unit koji se testira.
 - Asssert (Tvrditi) deo u kom se proverava da li rezultat izvršenja zadovoljava definisane kriterijume.
 
-https://github.com/stefi51/unit-tests-tutorial/blob/main/tests/Template.Business.UnitTests/Concepts.cs#L18-L40
+Primer Unit testa koji testira izračunavanje konačne cene narudzbine sa primenjenim popustom:
+```csharp
+[TestMethod]
+[DataRow(100.0, 2, 10.0, 180.0)]
+[DataRow(100.0, 3, 20.0, 240.0)]
+public void CalculateTotal_ShouldApplyDiscountCorrectlyMultiple(double price, int quantity,
+                                                                double discountPercent, double expectedTotal)
+{
+    // Arrange    
+    var service = new OrderService();
+    
+    // Act       
+    var totalPrice = service.CalculateTotal(price: (decimal)price, quantity: quantity,
+                                                    discountPercent: (decimal)discountPercent);
 
+    // Assert    
+    Assert.AreEqual((decimal)expectedTotal, totalPrice);
+}
+```
+Kao što se može videti iz primera, ovaj Unit test će izvršiti 2 test scenaria, za količinu od 2,3 i popustom od 10% i 20% procenata.<br>
+👉 [Source kod se nalazi u Concepts.cs file-u. (lines 33–48)](https://github.com/stefi51/unit-tests-tutorial/blob/main/tests/Template.Business.UnitTests/Concepts.cs#L33-L48)
+
+---
 
 У овом пројекту коришћена је MSTest библиотека за јединично тестирање. Поред ње познате су и xUnit и NUnit.
 
