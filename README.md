@@ -210,7 +210,7 @@ dotnet add package FluentAssertions
 Na gore navedenom primeru prikazana je komparacija sa korišćenjem i bez korišćenja Fluent Assertions biblioteke, korišćenje biblioteke smanjuje pisanje samog koda i pojednostavljuje komparaciju objekata. <br>
 Sama komparacija će se izvršiti nad svakim property-em samog objekta.
 <br>
-##### Primer pisanja tvrdji sa Fluent Assertions bibliotekom i validacijom liste objekata
+##### Primer pisanja tvrdnji sa Fluent Assertions bibliotekom i validacijom liste objekata
 ```csharp
     [TestMethod]
     public async Task GetUsers()
@@ -246,7 +246,58 @@ Sama komparacija će se izvršiti nad svakim property-em samog objekta.
     }
 ```
 ---
+#### Još neke od tehnika pri pisanju tvrdnji
 
+Još jedna korisna mogućnost koju nam pruža Moq biblioteka a može biti korisno kod pisanja tvrdnji je da li je neka funkcija pozvana tokom izvršenja i koliko puta. <br>
 
+```csharp
+    [TestMethod]
+    public async Task DeleteUserHappyPath()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var email = "john.doe@test.com";
+        _repository.Setup(repo => repo.Query<User>()).Returns(() => new List<User>()
+        {
+            new()
+            {
+                Id = userId,
+                Email = email,
+            },
+        }.AsQueryable().BuildMock());
+        _paymentService.Setup(x => x.HasPendingPayments(email)).ReturnsAsync(false);
 
+        //Act
+        await _sut.DeleteUser(userId);
 
+        // Assert
+        _repository.Verify(repo => repo.Delete(It.Is<User>(u => u.Id == userId
+                                                                && u.Email == email)), Times.Once);
+        _repository.Verify(repo => repo.SaveChangesAsync(), Times.Once);
+        _paymentService.Verify(payment => payment.HasPendingPayments(email), Times.Once);
+    }
+```
+Na ovom primeru može se videti tvrdnja da metoda DeleteUser() treba pozvati svaku od navedenih metoda po 1 put, ako to nije slučaj ili ulazni podaci ne odgovaraju (userId i Email), test će rezultirati kao failed. <br>
+
+Takođe moguće je i testirati da li desio očekivani izuzetak(Exception) tokom izvršenja.
+```csharp
+    [TestMethod]
+    public async Task DeleteUserWhenUserDoesNotExist()
+    {
+        // Arrange    
+        var userId = Guid.NewGuid();
+        _repository.Setup(repo => repo.Query<User>()).Returns(() => new List<User>(){ }.AsQueryable().BuildMock());
+
+        // Act   
+        var requestAction = async () => await _sut.DeleteUser(userId);
+
+        // Assert 
+        await requestAction.Should().ThrowAsync<Exception>()
+            .WithMessage($"User with UserId:{userId} does not exist.");
+
+        _repository.Verify(repo => repo.Delete(It.IsAny<User>()), Times.Never());
+        _repository.Verify(repo => repo.SaveChangesAsync(), Times.Never);
+        _paymentService.Verify(payment => payment.HasPendingPayments(It.IsAny<string>()), Times.Never);
+    }
+```
+---
