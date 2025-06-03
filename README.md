@@ -153,8 +153,100 @@ U ovom slučaju flow koji treba pokriti je:
 <br>
 
 ---
-Naredni čest problem koji se javlja kod pisanja Unit test
+##### Problem sa pisanjem tvrdnji (Assert)
+Naredni čest problem koji se javlja kod pisanja Unit testova vezan je za pisanje samih tvrdnji koje rezultat izvršenja i Unit test treba da zadovolji. <br>
+Sam framework za Unit testiranje pruža Assert metode ali one obično rade sa prostim tipovima podataka i pisanje kompleksnih tvrdnji zahteva puno više linija koda. <br>
+Takođe pisanje tvrdnji koje bi obuhvatale testiranje objekata ili listi objekata bez biblioteka bi zahtevalo testiranje svakog property-a zasebno, što može biti zamorno i nečitljivo. <br>
+Da bi se rešio ovaj problem na raspologanju su nam biblioteka koja omogućavaju jednostavnije i lako čitljive tvrdnje. <br>
+
+U ovom tutorijalu korišćenja je [Fluent Assertions](https://fluentassertions.com/) biblioteka, pored nje poznata je i često korišćena je i [Shouldly](https://docs.shouldly.org/) biblioteka. <br>
+
+Za korišćenje Fluent Assertions biblioteke potrebno je instalirati je u projekat u kome se nalaze testovi pomoću Package menadžera ili komandom:
+```
+dotnet add package FluentAssertions
+```
+
+##### Primer pisanja tvrdnji sa Fluent Assertions bibliotekom sa validacijom objekata i stringova
+```csharp
+    [TestMethod]
+    public async Task GetUserByUidWhenUserExists()
+    {
+        //Arrange
+        var user = new UserDto()
+        {
+            UserUid = new Guid("29cbcd3d-9216-409e-a6a2-37f9c9b21fd4"),
+            LastName = "Doe",
+            Name = "John",
+            Email = "john.doe@test.com"
+        };
+
+        //Act
+        var result = await _sut.GetUser(user.UserUid);
+
+        //Assert
+
+        // Sa Fluent Assertion bibliotekom
+        result.Should().NotBeNull();
+        result.Should().BeEquivalentTo(user);
+
+        // Bez Fluent Assertion biblioteke
+        /*Assert.IsNotNull(result);
+        Assert.AreEqual(result.UserUid, user.UserUid);
+        Assert.AreEqual(result.Email, user.Email);
+        Assert.AreEqual(result.Name, user.Name);*/
+        
+        // Sa Fluent Assertion bibliotekom
+        user.Name.Should().NotBeNull().And.StartWith("J").And.EndWith("n");
+
+        // Bez Fluent Assertion biblioteke
+        /*Assert.IsNotNull(user.Name);
+        Assert.IsTrue(user.Name.StartsWith("J"));
+        Assert.IsTrue(user.Name.EndsWith("n"));*/
+  
+    }
+```
+👉 [Source code (lines 62–95)](https://github.com/stefi51/unit-tests-tutorial/blob/main/tests/Template.Business.UnitTests/UserServiceUnitTests.cs#L62-L95)
+<br>
+Na gore navedenom primeru prikazana je komparacija sa korišćenjem i bez korišćenja Fluent Assertions biblioteke, korišćenje biblioteke smanjuje pisanje samog koda i pojednostavljuje komparaciju objekata. <br>
+Sama komparacija će se izvršiti nad svakim property-em samog objekta.
+<br>
+##### Primer pisanja tvrdji sa Fluent Assertions bibliotekom i validacijom liste objekata
+```csharp
+    [TestMethod]
+    public async Task GetUsers()
+    {
+        //Arrange
+        var expectedUser1 = new UserDto()
+        {
+            UserUid = new Guid("29cbcd3d-9216-409e-a6a2-37f9c9b21fd4"),
+            LastName = "Doe",
+            Name = "John",
+            Email = "john.doe@test.com"
+        };
+        var expectedUser2 = new UserDto()
+        {
+            Name = "Mark",
+            LastName = "Cooper",
+            Email = "mark.cooper@test.com",
+            UserUid = new Guid("29cbcd3d-9216-409e-a6a2-37f9c9b21fd5")
+        };
+
+        var expectedUsers = new List<UserDto>()
+        {
+            expectedUser1,
+            expectedUser2
+        };
+
+        // Act
+        var users = await _sut.GetUsers();
+
+        //Assert
+        users.Should().NotBeNull();
+        users.Should().BeEquivalentTo(expectedUsers);
+    }
+```
+---
 
 
-Assertion библиотека: У овом пројекту коришћена је [Fluent Assertions](https://fluentassertions.com/) библиотека. 
-Поред ње на располагању је и [Shouldly](https://docs.shouldly.org/) библиотека.
+
+

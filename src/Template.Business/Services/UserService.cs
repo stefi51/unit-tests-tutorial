@@ -56,6 +56,7 @@ public class UserService : IUserService
 
         if (user is not null)
         {
+            // third party service
             var hasPendingPayments = await _paymentService.HasPendingPayments(user.Email);
             if (hasPendingPayments)
             {

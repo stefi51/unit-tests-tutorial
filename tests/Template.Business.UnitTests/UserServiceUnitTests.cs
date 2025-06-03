@@ -85,6 +85,13 @@ public class UserServiceUnitTests
         Assert.AreEqual(result.UserUid, user.UserUid);
         Assert.AreEqual(result.Email, user.Email);
         Assert.AreEqual(result.Name, user.Name);*/
+        
+        // Redundant, just to show use case
+        user.Name.Should().NotBeNull().And.StartWith("J").And.EndWith("n");
+
+        /*Assert.IsNotNull(user.Name);
+        Assert.IsTrue(user.Name.StartsWith("J"));
+        Assert.IsTrue(user.Name.EndsWith("n"));*/
     }
 
 
