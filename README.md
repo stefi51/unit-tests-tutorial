@@ -64,10 +64,97 @@ Pored MSTest biblioteke poznate su i široko rasporstanje su :
   | **Assert Class**                 | `Assert.AreEqual(...)`              | `Assert.AreEqual(...)`       | `Assert.Equal(...)`               |
 
 ---
-Mock библиотека: У овом пројекту коришћена је Moq библиотека.
-Поред њих су познате и јако добре [NSubstitute](https://nsubstitute.github.io/) и [FakeItEasy](https://fakeiteasy.github.io/) .
-Више о њима може се наћи у њиховој званичној документацији. 
+### Problemi i izazovi pri pisanju Unit testova u realnim projektima
+// TODO prvi problem <br>
+Jedan od većih izazova u pisanju Unit testova je kako izolovati unit koji se testira od modula i servisa od koje on zavisi i da sam rezultat izvršenja našeg unit testa ne zavisi od spoljnih uticaja, to jest od zavisnih servisa(dependencies). <br>
+Jedno od resenja je koristiti Dependency Injection (DI) softverski obrazac. <br>
+Na ovaj način je moguće u testu napraviti objekat koji simulira servis od koga sam unit zavisi, međutim to zahteva dodatan posao gde bi softver inženjer morao napisati implemtaciju za simulaciju. 
+Ovaj koncept poznaz je kao mocking u Unit testiranju i sam framework za Unit testiranje to ne podržava podrazumevano, zato je potrebno koristiti dodatne bibilioteke koje to omogućavaju za nas, kao što su:<br>
+- [Moq](https://github.com/devlooped/moq)
+- [NSubstitute](https://nsubstitute.github.io/)
+- [FakeItEasy](https://fakeiteasy.github.io/)
+
+Mocking servisa od koje Unit zavisi se obično piše u Arrange fazi ili u [TestInitialize] metodi ako se potrebno koristiti mock servis u više test case-va.
+U ovom tutorijalu korišćena je **Moq** biblioteka jer se jedna od napoznatijih i često korišćenijih u industriji iako je njena sintaksa možda robusnija od konkurentskih biblioteka.
+
+#### Primer metode koja zavisi od third-part servisa i baze podataka koja se može isto tretirati kao dependency
+```csharp
+    public async Task DeleteUser(Guid userId)
+    {
+        // database, takođe dependency
+        var user = await _repository.Query<User>().SingleOrDefaultAsync(x => x.Id == userId);
+
+        if (user is not null)
+        {
+            // third party service
+            var hasPendingPayments = await _paymentService.HasPendingPayments(user.Email);
+            if (hasPendingPayments)
+            {
+                throw new Exception($"User with email:{user.Email} has pending payments");
+            }
+            _repository.Delete(user);
+            _repository.SaveChangesAsync();
+        }
+        else
+        {
+            throw new Exception($"User with UserId:{userId} does not exist.");
+        }
+    }
+```
+👉 [Source code (lines 33–48)](https://github.com/stefi51/unit-tests-tutorial/blob/main/src/Template.Business/Services/UserService.cs#L53-L72)
+<br>
+Da bi napisali dobre unit testove za gore navedenu metodu potrebno napraviti mock objekte koji će simulirati izvršenje stvarnih servisa.<br>
+U ovom slučaju flow koji treba pokriti je:
+1. User nije pronađen u bazi podataka
+ - Mock treba izgledati ovako:
+```csharp
+        // Arrange    
+        _repository.Setup(repo => repo.Query<User>()).Returns(() => new List<User>(){ }.AsQueryable().BuildMock());
+        // Simulacija prazne baze podataka
+```
+2. User je pronađen u bazi podataka i nema neizvršenih plaćanja
+- Mock treba izgledati ovako:
+```csharp
+        // Arrange
+        var userId = Guid.NewGuid();
+        var email = "john.doe@test.com";
+        // Simulacija da user postoji u bazi podataka
+        _repository.Setup(repo => repo.Query<User>()).Returns(() => new List<User>()
+        {
+            new()
+            {
+                Id = userId,
+                Email = email,
+            },
+        }.AsQueryable().BuildMock());
+        // Simulacija third-part servisa, gde on vraća da user sa ovim email-om nema neizvršenih plaćanja
+        _paymentService.Setup(x => x.HasPendingPayments(email)).ReturnsAsync(false);
+
+```
+3. User je pronađen ali ne može biti obrisan zato što ima neizvršena plaćanja
+- Mock treba izgledati ovako:
+```csharp
+
+        // Arrange
+        var userId = Guid.NewGuid();
+        var email = "john.doe@test.com";
+        // Simulacija da user postoji u bazi podataka
+        _repository.Setup(repo => repo.Query<User>()).Returns(() => new List<User>()
+        {
+            new()
+            {
+                Id = userId,
+                Email = email,
+            },
+        }.AsQueryable().BuildMock());
+         // Simulacija third-part servisa, gde on vraća da user sa ovim email-om ima neizvršenih plaćanja
+        _paymentService.Setup(x => x.HasPendingPayments(email)).ReturnsAsync(true);
+```
+<br>
 
 ---
+Naredni čest problem koji se javlja kod pisanja Unit test
+
+
 Assertion библиотека: У овом пројекту коришћена је [Fluent Assertions](https://fluentassertions.com/) библиотека. 
 Поред ње на располагању је и [Shouldly](https://docs.shouldly.org/) библиотека.
