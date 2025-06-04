@@ -65,7 +65,9 @@ Pored MSTest biblioteke poznate su i široko rasporstanje su :
   | **Teardown Method**              | `[TestCleanup]`                     | `[TearDown]`                 | `IDisposable.Dispose()`           |
   | **Assert Class**                 | `Assert.AreEqual(...)`              | `Assert.AreEqual(...)`       | `Assert.Equal(...)`               |
 
+
   _Tabela 1. Komparacija sintakse između različitih frameworka za Unit testiranje._
+  
 ---
 ### Problemi i izazovi pri pisanju Unit testova u realnim projektima
 
@@ -318,9 +320,12 @@ Sama komparacija će se izvršiti nad svakim property-em samog objekta.
         users.Should().BeEquivalentTo(expectedUsers);
     }
 ```
+
 👉 [Source code (lines 111–142)](https://github.com/stefi51/unit-tests-tutorial/blob/main/tests/Template.Business.UnitTests/UserServiceUnitTests.cs#L111-L142)
 <br>
+
 ---
+
 #### Još neke od tehnika pri pisanju tvrdnji
 
 Još jedna korisna mogućnost koju nam pruža Moq biblioteka a može biti korisno kod pisanja tvrdnji je da li je neka funkcija pozvana tokom izvršenja i koliko puta. <br>
