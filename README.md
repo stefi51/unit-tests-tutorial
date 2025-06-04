@@ -5,13 +5,15 @@
 Unit testiranje predstavlja proces testiranja najmanjih funkcionalnih delova(units) softverske aplikacije, tipično su to funkcije ili metode, gde je primarni cilj potvrditi da one ispravno i očekivano funkcionišu. <br>
 Unit testiranja omogućava rano otkrivanje grešaka(bugs) tokom samog razvoja funkcionalnosti aplikacije, zatim poboljšanje kvaliteta nastalog koda, kao i smanjenje vremena za testiranje novonastalih izmena tokom ciklusa održavanja softverske aplikacije. <br>
 
-Osnovni je deo **Test-Driven Development (TDD)**, gde se Unit testovi, sa očekivanim rezultatima koji unit treba da zadovolji, pišu pre same implementacije unit-a.<br> Ovo predstavlja ekstremni slučaj, u praksi većina softver inženjera piše Unit testove nakom same implementacije da bi testirali novu funkcionalnost i pre samog kreiranja pull-request-a(PR).
+Osnovni je deo **Test-Driven Development (TDD)**, gde se Unit testovi, sa očekivanim rezultatima koji unit treba da zadovolji, pišu pre same implementacije unit-a.<br>
+Ovo predstavlja ekstremni slučaj i u praksi većina softver inženjera piše Unit testove nakon same implementacije da bi testirali novu funkcionalnost i pre samog kreiranja pull-request-a(PR).
 
-TODO prednosti i mane
+
+Pored Unit testova u softverskom inženjerstvu u upotrebi su Integration testovi i End to End (E2E) o kojima neće biti reči u ovom tutorijalu, ti testovi koji su zaduženi za testiranje softverske aplikacija na višem nivou koji uključuju testiranje integracije svih servisa i modula, dok to nije posao Unit testova. <br>
 
 ---
 
-### Primer Unit test i AAA (Arrange, Act, Assert) obrazac
+### Primer Unit test i AAA (Arrange, Act, Assert)  obrazca
 
 Unit test predstavlja blok koda koji verifikuje ispravnost izolovanog unita.<br>
 Napisan je tako da verifikuje da li se određeni unit ponaša u skladu sa željenim ponašanjem koje je softver inženjer zahteva.<br>
@@ -20,7 +22,7 @@ Obrazac koji je skoro postao standard u industriji i često se sreće, AAA (Arra
 - Act (Postupak) deo u kom se izvršava Unit koji se testira.
 - Asssert (Tvrditi) deo u kom se proverava da li rezultat izvršenja zadovoljava definisane kriterijume.
 
-Primer Unit testa koji testira izračunavanje konačne cene narudzbine sa primenjenim popustom:
+Primer Unit testa koji testira izračunavanje konačne cene narudžbine sa primenjenim popustom:
 ```csharp
 [TestMethod]
 [DataRow(100.0, 2, 10.0, 180.0)]
@@ -55,29 +57,100 @@ Pored MSTest biblioteke poznate su i široko rasporstanje su :
 <br>
 
   | Feature                          | **MS Test**                         | **NUnit**                    | **xUnit**                         |
-  | -------------------------------- | ----------------------------------- | ---------------------------- | --------------------------------- |
-  | **Test Class Attribute**         | `[TestClass]`                       | `[TestFixture]` *(optional)* | ❌ No class attribute needed       |
+  | -------------------------------- | ----------------------------------- | ---------------------------- |-----------------------------------|
+  | **Test Class Attribute**         | `[TestClass]`                       | `[TestFixture]` *(optional)* | ❌ Nije potrebno                   |
   | **Test Method Attribute**        | `[TestMethod]`                      | `[Test]`                     | `[Fact]`                          |
   | **Parameterized Test Attribute** | `[DataTestMethod] + [DataRow(...)]` | `[TestCase(...)]`            | `[Theory] + [InlineData(...)]`    |
   | **Setup Method**                 | `[TestInitialize]`                  | `[SetUp]`                    | Constructor or `IClassFixture<T>` |
   | **Teardown Method**              | `[TestCleanup]`                     | `[TearDown]`                 | `IDisposable.Dispose()`           |
   | **Assert Class**                 | `Assert.AreEqual(...)`              | `Assert.AreEqual(...)`       | `Assert.Equal(...)`               |
 
+  _Tabela 1. Komparacija sintakse između različitih frameworka za Unit testiranje._
 ---
 ### Problemi i izazovi pri pisanju Unit testova u realnim projektima
-// TODO prvi problem <br>
+
+##### Problem servisa od kojih zavisi funkcionisanje testiranog modula
 Jedan od većih izazova u pisanju Unit testova je kako izolovati unit koji se testira od modula i servisa od koje on zavisi i da sam rezultat izvršenja našeg unit testa ne zavisi od spoljnih uticaja, to jest od zavisnih servisa(dependencies). <br>
-Jedno od resenja je koristiti Dependency Injection (DI) softverski obrazac. <br>
-Na ovaj način je moguće u testu napraviti objekat koji simulira servis od koga sam unit zavisi, međutim to zahteva dodatan posao gde bi softver inženjer morao napisati implemtaciju za simulaciju. 
-Ovaj koncept poznaz je kao mocking u Unit testiranju i sam framework za Unit testiranje to ne podržava podrazumevano, zato je potrebno koristiti dodatne bibilioteke koje to omogućavaju za nas, kao što su:<br>
+Jedno od rešenja je koristiti Dependency Injection (DI) softverski obrazac. <br>
+Na ovaj način je moguće u testu napraviti objekat koji simulira rad servisa od koga sam unit zavisi, međutim to zahteva dodatan posao gde bi softver inženjer morao napisati implemtaciju za simulaciju. 
+Ovaj koncept poznat je kao mocking u Unit testiranju i sam framework za Unit testiranje to ne podržava podrazumevano, zato je potrebno koristiti dodatne bibilioteke koje to omogućavaju za nas, kao što su:<br>
 - [Moq](https://github.com/devlooped/moq)
 - [NSubstitute](https://nsubstitute.github.io/)
 - [FakeItEasy](https://fakeiteasy.github.io/)
 
 Mocking servisa od koje Unit zavisi se obično piše u Arrange fazi ili u [TestInitialize] metodi ako se potrebno koristiti mock servis u više test case-va.
-U ovom tutorijalu korišćena je **Moq** biblioteka jer se jedna od napoznatijih i često korišćenijih u industriji iako je njena sintaksa možda robusnija od konkurentskih biblioteka.
+U ovom tutorijalu korišćena je **Moq** biblioteka jer je jedna od najpoznatijih i često korišćenijih u industriji iako je njena sintaksa možda robusnija od konkurentskih biblioteka.
 
-#### Primer metode koja zavisi od third-part servisa i baze podataka koja se može isto tretirati kao dependency
+Za korišćenje Moq biblioteke potrebno je, instalirati je u projekat u kome se nalaze testovi pomoću Package menadžera ili komandom:
+```
+dotnet add package Moq
+
+```
+##### Primer jednostavne metode sa bazom podataka kao dependency
+```csharp
+  public async Task<UserDto?> GetUser(Guid id)
+  {
+      var user = await _repository.QueryAsNoTracking<User>()
+          .Where(x => x.Id == id)
+          .SingleOrDefaultAsync();
+
+      return _mapper.Map<UserDto>(user);
+  }
+```
+👉 [Source kod (lines 23–30)](https://github.com/stefi51/unit-tests-tutorial/blob/main/src/Template.Business/Services/UserService.cs#L23-L30) <br>
+Kako bi testirali gore navedenu metodu potrebno je mock-ovati _repository.QueryAsNoTracking i podesiti da ona vraća određene korisnike. <br>
+I to preko Moq biblioteke možemo uraditi na sledeći način: <br>
+```csharp
+
+  [TestInitialize]
+  public void Initialize()
+  {
+      _repository.Setup(repo => repo.QueryAsNoTracking<User>()).Returns(() => new List<User>()
+      {
+          new()
+          {
+              Id = new Guid("29cbcd3d-9216-409e-a6a2-37f9c9b21fd4"),
+              SurName = "Doe",
+              Name = "John",
+              Email = "john.doe@test.com",
+              Password = "password",
+          },
+          new()
+          {
+              Name = "Mark",
+              SurName = "Cooper",
+              Email = "mark.cooper@test.com",
+              Password = "mark.password",
+              Id = new Guid("29cbcd3d-9216-409e-a6a2-37f9c9b21fd5")
+          }
+      }.AsQueryable().BuildMock());
+    }
+```
+Koji dalje možemo koristi u Unit test metodi. <br>
+```csharp
+ [TestMethod]
+    public async Task GetUserByUidWhenUserExists()
+    {
+        //Arrange
+        var user = new UserDto()
+        {
+            UserUid = new Guid("29cbcd3d-9216-409e-a6a2-37f9c9b21fd4"),
+            LastName = "Doe",
+            Name = "John",
+            Email = "john.doe@test.com"
+        };
+
+        //Act
+        var result = await _sut.GetUser(user.UserUid);
+
+        //Assert
+        result.Should().NotBeNull();
+        result.Should().BeEquivalentTo(user);
+    }
+```
+Na ovaj način eleminisan je dependency ka bazi podataka.
+
+##### Primer kompleksnije metode koja zavisi od third-part servisa i baze podataka
 ```csharp
     public async Task DeleteUser(Guid userId)
     {
@@ -153,15 +226,15 @@ U ovom slučaju flow koji treba pokriti je:
 <br>
 
 ---
-##### Problem sa pisanjem tvrdnji (Assert)
+##### Problem pisanja kompleksnih tvrdnji (Assert)
 Naredni čest problem koji se javlja kod pisanja Unit testova vezan je za pisanje samih tvrdnji koje rezultat izvršenja i Unit test treba da zadovolji. <br>
 Sam framework za Unit testiranje pruža Assert metode ali one obično rade sa prostim tipovima podataka i pisanje kompleksnih tvrdnji zahteva puno više linija koda. <br>
-Takođe pisanje tvrdnji koje bi obuhvatale testiranje objekata ili listi objekata bez biblioteka bi zahtevalo testiranje svakog property-a zasebno, što može biti zamorno i nečitljivo. <br>
+Takođe, pisanje tvrdnji koje bi obuhvatale testiranje objekata ili listi objekata bez biblioteka bi zahtevalo testiranje svakog property-a zasebno, što može biti zamorno i nečitljivo. <br>
 Da bi se rešio ovaj problem na raspologanju su nam biblioteka koja omogućavaju jednostavnije i lako čitljive tvrdnje. <br>
 
 U ovom tutorijalu korišćenja je [Fluent Assertions](https://fluentassertions.com/) biblioteka, pored nje poznata je i često korišćena je i [Shouldly](https://docs.shouldly.org/) biblioteka. <br>
 
-Za korišćenje Fluent Assertions biblioteke potrebno je instalirati je u projekat u kome se nalaze testovi pomoću Package menadžera ili komandom:
+Za korišćenje Fluent Assertions biblioteke potrebno je, instalirati je u projekat u kome se nalaze testovi pomoću Package menadžera ili komandom:
 ```
 dotnet add package FluentAssertions
 ```
@@ -245,6 +318,8 @@ Sama komparacija će se izvršiti nad svakim property-em samog objekta.
         users.Should().BeEquivalentTo(expectedUsers);
     }
 ```
+👉 [Source code (lines 111–142)](https://github.com/stefi51/unit-tests-tutorial/blob/main/tests/Template.Business.UnitTests/UserServiceUnitTests.cs#L111-L142)
+<br>
 ---
 #### Još neke od tehnika pri pisanju tvrdnji
 
@@ -277,6 +352,8 @@ Još jedna korisna mogućnost koju nam pruža Moq biblioteka a može biti korisn
         _paymentService.Verify(payment => payment.HasPendingPayments(email), Times.Once);
     }
 ```
+👉 [Source code (lines 198–222)](https://github.com/stefi51/unit-tests-tutorial/blob/main/tests/Template.Business.UnitTests/UserServiceUnitTests.cs#L198-L222)
+<br>
 Na ovom primeru može se videti tvrdnja da metoda DeleteUser() treba pozvati svaku od navedenih metoda po 1 put, ako to nije slučaj ili ulazni podaci ne odgovaraju (userId i Email), test će rezultirati kao failed. <br>
 
 Takođe moguće je i testirati da li desio očekivani izuzetak(Exception) tokom izvršenja.
@@ -300,4 +377,21 @@ Takođe moguće je i testirati da li desio očekivani izuzetak(Exception) tokom 
         _paymentService.Verify(payment => payment.HasPendingPayments(It.IsAny<string>()), Times.Never);
     }
 ```
+👉 [Source code (lines 225–242)](https://github.com/stefi51/unit-tests-tutorial/blob/main/tests/Template.Business.UnitTests/UserServiceUnitTests.cs#L225-L242)
+<br>
 ---
+### Prednosti pisanja Unit testova
+Najvažnije prednosti pisanja unit testova su:
+
+- Efikasno otkrivanje grešaka <br>
+  Samim pokretanjem testova pre deploymenta možemo se uveriti da testirana metoda funkcioniše i sprečiti da bag ode na neko više okruženje.<br>
+  Takođe su značajni i smanjuju vreme testiranja kada je potrebno uraditi naknadne izmene u nekoj metodi, pokretanje unit testova može potvrditi da li metoda idalje funkciniše očekivano ili je novododatom izmenom napravljena greška.
+- Mogu služiti kao dokumentacija <br>
+   Pisanjem Unit testova predstavlja i jednu vrstu dokumentacije tako što jasno opisuje šta zamišljeno da testirana metoda treba da zadovolji. Softver inženjeri mogu pročitati Unit testove i shvatiti šta metoda treba da zadovolji, bez samo pokretanja metode ili testiranja iste.
+---
+### Nedostaci pisanja Unit testova
+Nekada pisanje Unit testova nije značajno i nema velikih opravdanja za trošenjem dodatnog vremena. <br>
+Neki od slučaja su: 
+- Legacy kod, nekada nije moguće ni napisati kod za neki legacy softver pa nema ni smisla pisati takve teskove ako nema vrednosti. Ili legacy kod neće više biti korišćen u budućnosti.
+- Nedostatak vremena, pisanje Unit testova može zahtevati puno vremena pa samim tim povećati vreme razvoja i troškove.
+- Česta izmena zahteva koja testirana metoda treba da zadovolji, u tom slučaju je potrebno i pisati testove više puta.
