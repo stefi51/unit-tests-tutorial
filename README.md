@@ -9,7 +9,7 @@ Osnovni je deo **Test-Driven Development (TDD)**, gde se Unit testovi, sa očeki
 Ovo predstavlja ekstremni slučaj i u praksi većina softver inženjera piše Unit testove nakon same implementacije da bi testirali novu funkcionalnost i pre samog kreiranja pull-request-a(PR).
 
 
-Pored Unit testova u softverskom inženjerstvu u upotrebi su Integration testovi i End to End (E2E) o kojima neće biti reči u ovom tutorijalu, ti testovi koji su zaduženi za testiranje softverske aplikacija na višem nivou koji uključuju testiranje integracije svih servisa i modula, dok to nije posao Unit testova. <br>
+Pored Unit testova u softverskom inženjerstvu u upotrebi su Integration testovi i End to End (E2E) o kojima neće biti reči u ovom tutorijalu, ti testovi su zaduženi za testiranje softverske aplikacija na višem nivou koji uključuju testiranje integracije svih servisa i modula, dok to nije posao Unit testova. <br>
 
 ---
 
