@@ -359,6 +359,7 @@ Još jedna korisna mogućnost koju nam pruža Moq biblioteka a može biti korisn
 ```
 👉 [Source code (lines 198–222)](https://github.com/stefi51/unit-tests-tutorial/blob/main/tests/Template.Business.UnitTests/UserServiceUnitTests.cs#L198-L222)
 <br>
+
 Na ovom primeru može se videti tvrdnja da metoda DeleteUser() treba pozvati svaku od navedenih metoda po 1 put, ako to nije slučaj ili ulazni podaci ne odgovaraju (userId i Email), test će rezultirati kao failed. <br>
 
 Takođe moguće je i testirati da li desio očekivani izuzetak(Exception) tokom izvršenja.
@@ -382,8 +383,10 @@ Takođe moguće je i testirati da li desio očekivani izuzetak(Exception) tokom 
         _paymentService.Verify(payment => payment.HasPendingPayments(It.IsAny<string>()), Times.Never);
     }
 ```
+
 👉 [Source code (lines 225–242)](https://github.com/stefi51/unit-tests-tutorial/blob/main/tests/Template.Business.UnitTests/UserServiceUnitTests.cs#L225-L242)
 <br>
+
 ---
 ### Prednosti pisanja Unit testova
 Najvažnije prednosti pisanja unit testova su:
