@@ -1,6 +1,23 @@
 # Pisanje jediničnih (Unit) testova u .NET projektima uz pomoć [Moq](https://github.com/devlooped/moq), [Fluent Assertions](https://fluentassertions.com/) biblioteka
 
 ---
+
+## Sadržaj
+
+1. [Šta predstavlja Unit testiranje u softverskom inženjerstvu?](#šta-predstavlja-unit-testiranje-u-softverskom-inženjerstvu)
+2. [Primer Unit test i AAA (Arrange, Act, Assert) obrazca](#primer-unit-test-i-aaa-arrange-act-assert-obrazca)
+3. [Izbor framework-a za Unit testiranje](#izbor-framework-a-za-unit-testiranje)
+4. [Problemi i izazovi pri pisanju Unit testova u realnim projektima](#problemi-i-izazovi-pri-pisanju-unit-testova-u-realnim-projektima)
+  - [Problem servisa od kojih zavisi funkcionisanje testiranog modula](#problem-servisa-od-kojih-zavisi-funkcionisanje-testiranog-modula)
+    - [Primer jednostavne metode sa bazom podataka kao dependency](#primer-jednostavne-metode-sa-bazom-podataka-kao-dependency)
+    - [Primer kompleksnije metode koja zavisi od third-part servisa i baze podataka](#primer-kompleksnije-metode-koja-zavisi-od-third-part-servisa-i-baze-podataka)
+  - [Problem pisanja kompleksnih tvrdnji (Assert)](#problem-pisanja-kompleksnih-tvrdnji-assert)
+    - [Primer tvrdnji sa Fluent Assertions bibliotekom (objekti i stringovi)](#primer-pisanja-tvrdnji-sa-fluent-assertions-bibliotekom-sa-validacijom-objekata-i-stringova)
+    - [Primer tvrdnji sa Fluent Assertions bibliotekom (liste objekata)](#primer-pisanja-tvrdnji-sa-fluent-assertions-bibliotekom-i-validacijom-liste-objekata)
+5. [Još neke od tehnika pri pisanju tvrdnji](#još-neke-od-tehnika-pri-pisanju-tvrdnji)
+
+
+---
 ### Šta predstavlja Unit testiranje u softverskom inženjerstvu?
 Unit testiranje predstavlja proces testiranja najmanjih funkcionalnih delova(units) softverske aplikacije, tipično su to funkcije ili metode, gde je primarni cilj potvrditi da one ispravno i očekivano funkcionišu. <br>
 Unit testiranja omogućava rano otkrivanje grešaka(bugs) tokom samog razvoja funkcionalnosti aplikacije, zatim poboljšanje kvaliteta nastalog koda, kao i smanjenje vremena za testiranje novonastalih izmena tokom ciklusa održavanja softverske aplikacije. <br>
