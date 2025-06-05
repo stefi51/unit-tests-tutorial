@@ -17,7 +17,8 @@ Opis: Demonstracija različitih principa u pisanju Unit testova, dobre prakse, n
      - [Primer tvrdnji sa Fluent Assertions bibliotekom (objekti i stringovi)](#primer-pisanja-tvrdnji-sa-fluent-assertions-bibliotekom-sa-validacijom-objekata-i-stringova)
      - [Primer tvrdnji sa Fluent Assertions bibliotekom (liste objekata)](#primer-pisanja-tvrdnji-sa-fluent-assertions-bibliotekom-i-validacijom-liste-objekata)
 5. [Još neke od tehnika pri pisanju tvrdnji](#još-neke-od-tehnika-pri-pisanju-tvrdnji)
-
+6. [Prednosti pisanja Unit testova](#prednosti-pisanja-unit-testova)
+7. [Nedostaci pisanja Unit testova](#nedostaci-pisanja-unit-testova)
 ---
 ### Šta predstavlja Unit testiranje u softverskom inženjerstvu?
 Unit testiranje predstavlja proces testiranja najmanjih funkcionalnih delova(units) softverske aplikacije, tipično su to funkcije ili metode, gde je primarni cilj potvrditi da one ispravno i očekivano funkcionišu. <br>
