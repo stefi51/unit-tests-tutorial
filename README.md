@@ -9,7 +9,7 @@ Osnovni je deo **Test-Driven Development (TDD)**, gde se Unit testovi, sa očeki
 Ovo predstavlja ekstremni slučaj i u praksi većina softver inženjera piše Unit testove nakon same implementacije da bi testirali novu funkcionalnost i pre samog kreiranja pull-request-a(PR).
 
 
-Pored Unit testova u softverskom inženjerstvu u upotrebi su Integration testovi i End to End (E2E) o kojima neće biti reči u ovom tutorijalu, ti testovi koji su zaduženi za testiranje softverske aplikacija na višem nivou koji uključuju testiranje integracije svih servisa i modula, dok to nije posao Unit testova. <br>
+Pored Unit testova u softverskom inženjerstvu u upotrebi su Integration testovi i End to End (E2E) o kojima neće biti reči u ovom tutorijalu, ti testovi su zaduženi za testiranje softverske aplikacija na višem nivou koji uključuju testiranje integracije svih servisa i modula, dok to nije posao Unit testova. <br>
 
 ---
 
@@ -65,7 +65,9 @@ Pored MSTest biblioteke poznate su i široko rasporstanje su :
   | **Teardown Method**              | `[TestCleanup]`                     | `[TearDown]`                 | `IDisposable.Dispose()`           |
   | **Assert Class**                 | `Assert.AreEqual(...)`              | `Assert.AreEqual(...)`       | `Assert.Equal(...)`               |
 
+
   _Tabela 1. Komparacija sintakse između različitih frameworka za Unit testiranje._
+  
 ---
 ### Problemi i izazovi pri pisanju Unit testova u realnim projektima
 
@@ -318,9 +320,12 @@ Sama komparacija će se izvršiti nad svakim property-em samog objekta.
         users.Should().BeEquivalentTo(expectedUsers);
     }
 ```
+
 👉 [Source code (lines 111–142)](https://github.com/stefi51/unit-tests-tutorial/blob/main/tests/Template.Business.UnitTests/UserServiceUnitTests.cs#L111-L142)
 <br>
+
 ---
+
 #### Još neke od tehnika pri pisanju tvrdnji
 
 Još jedna korisna mogućnost koju nam pruža Moq biblioteka a može biti korisno kod pisanja tvrdnji je da li je neka funkcija pozvana tokom izvršenja i koliko puta. <br>
@@ -354,6 +359,7 @@ Još jedna korisna mogućnost koju nam pruža Moq biblioteka a može biti korisn
 ```
 👉 [Source code (lines 198–222)](https://github.com/stefi51/unit-tests-tutorial/blob/main/tests/Template.Business.UnitTests/UserServiceUnitTests.cs#L198-L222)
 <br>
+
 Na ovom primeru može se videti tvrdnja da metoda DeleteUser() treba pozvati svaku od navedenih metoda po 1 put, ako to nije slučaj ili ulazni podaci ne odgovaraju (userId i Email), test će rezultirati kao failed. <br>
 
 Takođe moguće je i testirati da li desio očekivani izuzetak(Exception) tokom izvršenja.
@@ -377,8 +383,10 @@ Takođe moguće je i testirati da li desio očekivani izuzetak(Exception) tokom 
         _paymentService.Verify(payment => payment.HasPendingPayments(It.IsAny<string>()), Times.Never);
     }
 ```
+
 👉 [Source code (lines 225–242)](https://github.com/stefi51/unit-tests-tutorial/blob/main/tests/Template.Business.UnitTests/UserServiceUnitTests.cs#L225-L242)
 <br>
+
 ---
 ### Prednosti pisanja Unit testova
 Najvažnije prednosti pisanja unit testova su:
